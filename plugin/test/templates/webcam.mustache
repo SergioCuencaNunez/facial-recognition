@@ -1,0 +1,101 @@
+<div class="login-form-webcam-container form-group">
+    <h1 class="login-heading mb-4">Before Loging to Moodle</h1>
+    <h2 class="login-heading mb-4">Take a Picture to Verify your Identity</h2>
+    <h2 class="login-heading mb-4">Please, center your face in the camera shown below</h2>
+
+    <div class="login-form-webcam form-group">
+        <label for="webcam" class="sr-only">{{#str}} webcam {{/str}}</label>
+        <video id="videoElement" width="350" height="275" autoplay></video>
+        <button id="btnPhoto" class="btn btn-primary btn-lg">Take Photo</button>
+        <canvas id="canvas" width="350" height="275"></canvas>
+    </div>
+</div>
+
+<script>
+    function load_page(){
+        // get the video element
+        var video = document.getElementById("videoElement");
+        var photo_button = document.querySelector("#btnPhoto");
+        var canvas = document.querySelector("#canvas");
+
+        // access the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.log("An error occurred: " + err);
+            });
+            
+        photo_button.addEventListener('click', function(event) {
+            event.preventDefault();
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            var photo_data = canvas.toDataURL('image/jpeg');
+            console.log("Photo Data");
+            console.log(photo_data);
+            sendPhoto(photo_data);
+        });
+    }
+
+    /*function sendPhoto(data){
+        fetch("http://127.0.0.1:6878/api/v1.0/detect", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: 'image=${encodeURIComponent(data)}'
+            })
+            .then(function(response) {
+            console.log("Server Response");
+            return response.text(); // extract the text from the response
+            })
+            .catch(error => {
+            console.error('Server upload error:', error);
+            });
+    }*/
+
+    function sendPhoto(data) {
+        return fetch("http://127.0.0.1:6878/api/v1.0/detect", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `image=${encodeURIComponent(data)}`
+        })
+            .then(function(response) {
+                console.log("Server Response:");
+                return response.text(); // extract the text from the response
+            })
+            .catch(function(error) {
+                console.error("Server upload error:", error);
+            });
+    }
+
+    /*function sendPhotoAndGetResponse(data) {
+        return sendPhoto(data) // call sendPhoto() function and return its promise
+        .then(function(response) {
+        return response.text(); // extract text from the response
+        })
+        .then(function(data) {
+        var isTrue = (data === "true"); // parse the boolean value
+        return fetch("auth.php", { // make another request
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+            isTrue: isTrue // pass the boolean value in the request body
+            })
+        });
+        })
+        .then(function(response) {
+        return response.json(); // extract JSON data from the response
+        })
+        .catch(function(error) {
+        console.error("Server upload error:", error);
+        });
+    }*/
+
+    window.addEventListener("load", load_page, false);
+
+</script>
