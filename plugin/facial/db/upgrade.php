@@ -17,7 +17,7 @@
 /**
  * No authentication plugin upgrade code
  *
- * @package    auth_test
+ * @package    auth_facial
  * @copyright  2017 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,11 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Function to upgrade auth_test.
+ * Function to upgrade auth_facial.
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
-function xmldb_auth_test_upgrade($oldversion) {
+function xmldb_auth_facial_upgrade($oldversion) {
     global $CFG, $DB;
 
     // Automatically generated Moodle v3.6.0 release upgrade line.

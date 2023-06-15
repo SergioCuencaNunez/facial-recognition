@@ -17,7 +17,7 @@
 /**
  * Version information
  *
- * @package    auth_test
+ * @package    auth_facial
  * @copyright  2011 Petr Skoda (http://skodak.org)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2022041900;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022041200;        // Requires this Moodle version.
-$plugin->component = 'auth_test';       // Full name of the plugin (used for diagnostics)
+$plugin->requires  = 2022041908;        // Requires this Moodle version.
+$plugin->component = 'auth_facial';       // Full name of the plugin (used for diagnostics)
 $plugin->maturity = MATURITY_STABLE;

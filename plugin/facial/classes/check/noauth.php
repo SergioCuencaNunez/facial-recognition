@@ -17,13 +17,13 @@
 /**
  * Verifies unsupported noauth setting
  *
- * @package    auth_test
+ * @package    auth_facial
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @copyright  2008 petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace auth_test\check;
+namespace auth_facial\check;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,14 +54,14 @@ class noauth extends \core\check\check {
      * @return result
      */
     public function get_result(): result {
-        if (is_enabled_auth('test')) {
+        if (is_enabled_auth('facial')) {
             $status = result::ERROR;
-            $summary = get_string('checknoautherror', 'auth_test');
+            $summary = get_string('checknoautherror', 'auth_facial');
         } else {
             $status = result::OK;
-            $summary = get_string('checknoauthok', 'auth_test');
+            $summary = get_string('checknoauthok', 'auth_facial');
         }
-        $details = get_string('checknoauthdetails', 'auth_test');
+        $details = get_string('checknoauthdetails', 'auth_facial');
 
         return new result($status, $summary, $details);
     }

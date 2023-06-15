@@ -1,0 +1,81 @@
+<div class="login-form-webcam-container form-group">
+    <h1 class="login-heading mb-4">Before Logging to Moodle</h1>
+    <h2 class="login-heading mb-4">Take a Picture to Verify your Identity</h2>
+    <h5 class="card-title d-inline">Please, center your face in the camera shown below</h5>
+    
+    <div class="login-form-webcam form-group">
+        <label for = "webcam" class = "sr-only">{{#str}} webcam {{/str}}</label>
+        <div id="videoContainer" style="position: relative;">
+            <video id="videoElement" width="350" height="275" autoplay></video>
+            <div id="lineBox" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40%; height: 60%; border: 2px solid #007bff; pointer-events: none;"></div>
+        </div>
+        <button id = "btnPhoto" class = "btn btn-primary btn-lg">Take Photo</button>
+        <canvas id = "canvas" width = "350" height = "275"></canvas>
+    </div>
+</div>
+
+<script>
+
+    function load_page(){
+        // get the video element
+        var video = document.getElementById("videoElement");
+        var photoButton = document.querySelector("#btnPhoto");
+        var canvas = document.querySelector("#canvas");
+        var lineBox = document.querySelector("#lineBox");
+
+        // access the webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(error) {
+                console.log("Error accessing the camera: " + error);
+            });
+
+        photoButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            var photoData = canvas.toDataURL('image/jpeg');
+            console.log("Photo Data");
+            console.log(photoData);
+            sendPhoto(photoData);
+        });
+    }
+
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        let currentDate = new Date().toISOString(); // Get the current date and time in ISO format (yyyy-mm-ddThh:mm:ss.sssZ)
+        let encodedCookie = btoa(value + currentDate); // Add the current date to the encoded value
+        document.cookie = name + "=" + (encodedCookie || "") + expires + "; path=/";
+    }
+
+    function sendPhoto(data) {
+        return fetch("http://127.0.0.1:6878/api/v1.0/detect", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `image=${encodeURIComponent(data)}`
+        })
+        .then(function(response) {
+            return response.json(); // parse the JSON response
+        })
+        .then(function(json) {
+            console.log("Server Response:");
+            let serverResult = json.result;
+            console.log(serverResult); // log the parsed JSON to the console
+            setCookie("serverResult", serverResult, 0.0417);
+        })
+        .catch(function(error) {
+            console.error("Server upload error:", error);
+        });
+    }
+
+    window.addEventListener("load", load_page, false);
+
+</script>

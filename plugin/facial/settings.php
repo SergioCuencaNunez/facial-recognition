@@ -13,29 +13,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Privacy Subsystem implementation for auth_test.
+ * Admin settings and defaults.
  *
- * @package    auth_test
- * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
+ * @package auth_facial
+ * @copyright  2017 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace auth_test\privacy;
-defined('MOODLE_INTERNAL') || die();
-/**
- * Privacy Subsystem for auth_test implementing null_provider.
- *
- * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class provider implements \core_privacy\local\metadata\null_provider {
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
-    }
+
+defined('MOODLE_INTERNAL') || die;
+
+if ($ADMIN->fulltree) {
+
+    // Introductory explanation.
+    $settings->add(new admin_setting_heading('auth_facial/pluginname', '',
+        new lang_string('auth_facialdescription', 'auth_facial')));
+
+    // Display locking / mapping of profile fields.
+    $authplugin = get_auth_plugin('facial');
+    display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,
+        get_string('auth_fieldlocks_help', 'auth'), false, false);
 }

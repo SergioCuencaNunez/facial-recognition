@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'auth_test', language 'en'.
+ * Strings for component 'auth_facial', language 'en'.
  *
- * @package   auth_test
+ * @package   auth_facial
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['auth_testdescription'] = 'Authentication test plugin description';
-$string['pluginname'] = 'Authentication test plugin';
-$string['privacy:metadata'] = 'The Authentication test plugin plugin does not store any personal data.';
-$string['checknoauthdetails'] = '<p>The <em>Authentication test plugin</em> plugin is not intended for production sites. Please disable it unless this is a development test site.</p>';
-$string['checknoautherror'] = 'The Authentication test plugin cannot be used on production sites.';
-$string['checknoauth'] = 'Authentication test plugin';
-$string['checknoauthok'] = 'The Authentication test plugin plugin is disabled.';
+$string['auth_facialdescription'] = 'Authentication Facial Recognition plugin description';
+$string['pluginname'] = 'Authentication Facial Recognition plugin';
+$string['privacy:metadata'] = 'The Authentication Facial Recognition plugin plugin does not store any personal data.';
+$string['checknoauthdetails'] = '<p>The <em>Authentication Facial Recognition plugin</em> plugin is not intended for production sites. Please disable it unless this is a development test site.</p>';
+$string['checknoautherror'] = 'The Authentication Facial Recognition plugin cannot be used on production sites.';
+$string['checknoauth'] = 'Authentication Facial Recognition plugin';
+$string['checknoauthok'] = 'The Authentication Facial Recognition plugin is disabled.';

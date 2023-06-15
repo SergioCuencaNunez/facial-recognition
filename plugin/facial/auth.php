@@ -17,7 +17,7 @@
 /**
  * Login with Facial Recognition.
  *
- * @package auth_test
+ * @package auth_facial
  * @author Sergio Cuenca
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
@@ -27,16 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/authlib.php');
 
 /**
- * Plugin for no authentication.
+ * Plugin for facial recognition authentication.
  */
-class auth_plugin_test extends auth_plugin_base {
+class auth_plugin_facial extends auth_plugin_base {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->authtype = 'test';
-        $this->config = get_config('auth_test');
+        $this->authtype = 'facial';
+        $this->config = get_config('auth_facial');
     }
 
     /**
@@ -44,73 +44,64 @@ class auth_plugin_test extends auth_plugin_base {
      *
      * @deprecated since Moodle 3.1
      */
-    public function auth_plugin_test() {
+    public function auth_plugin_facial() {
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct();
     }
   
+    /**
+     * Hook for overriding behaviour of login page.
+     * This method is called from login/index.php page for all enabled auth plugins.
+     */
     public function loginpage_hook() {
       global $CFG, $OUTPUT, $PAGE;
   
-      // Set the login page layout to use the custom Mustache template
-      $PAGE->set_pagelayout('login');
-  
       // Load the custom CSS file
-      $PAGE->requires->css('/auth/test/theme/custom/login.css');
-      
-      // Define the template data for Mustache
-      $templateData = array(
-          'videoElement' => '<video id="videoElement" width="320" height="240" autoplay></video>'
-      );
-      
-      // Render the Mustache template with the custom CSS and template data
-      echo $OUTPUT->render_from_template('auth_test/login', $templateData);
+      $PAGE->requires->css('/auth/facial/theme/custom/login.css');
+        
+      // Render the Mustache template with the custom CSS and no extra data as it is defined in the template
+      echo $OUTPUT->render_from_template('auth_facial/login', []);
     }
 
     /**
-     * Returns true if the username and password work or don't exist and false
+     * Extract the cookie of facial recognition server.
+     * @return string Response.
+     */
+    public function get_cookie() {      
+        if (isset($_COOKIE['serverResult'])) {
+          $encoded_cookie = $_COOKIE['serverResult'];
+          $decoded_cookie = base64_decode($encoded_cookie);
+          $cookie_value = substr($decoded_cookie, 0, -24); // Remove the last 10 characters (the date)
+          return $cookie_value;
+        }
+    }
+      
+    /**
+     * Returns true if the username and password work and if the cookie is true and false
      * if the user exists and the password is wrong.
      *
      * @param string $username The username
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    function user_login($username, $password) {
-        global $CFG, $DB, $USER;
+    public function user_login($username, $password) {
+        global $CFG, $DB;
+
         if (!$user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             return false;
         }
-        if (!validate_internal_user_password($user, $password)) {
-            return false;
-        } else {
-            if (isset($_POST['isTrue'])) {
-                return true;
-            } else {
-                header('Content-Type: application/json; charset=utf-8');
-                echo json_encode(array('error' => 'Authentication failed'));
-                redirect(
-                    new moodle_url('/login/index.php'), 
-                    'Your identity does not match. Not able to login. Try again.',
-                    null,
-                    \core\output\notification::NOTIFY_ERROR
-                );
-                return false;
-            }
-            /*require(['core/notification'], function(notification) {
-                notification.addNotification({
-                  message: "Your message here",
-                  type: "info"
-                });
-              });*/
-            //$command = escapeshellcmd('/usr/test/test.py');
-            //$output = shell_exec($command);
-        }
+        $cookie = $this->get_cookie();
 
-        if ($password === 'changeme') {
-            // force the change - this is deprecated and it makes sense only for manual auth,
-            // because most other plugins can not change password easily or
-            // passwords are always specified by users
-            set_user_preference('auth_forcepasswordchange', true, $user->id);
+        if (validate_internal_user_password($user, $password) && $cookie == 'true'){
+            return true;
+        } else{
+            redirect(
+                new moodle_url('/login/index.php'), 
+                'Your identity does not match. Not able to login. Try again.',
+                null,
+                \core\output\notification::NOTIFY_ERROR
+            );
+            return false;
         }
     }
 
@@ -181,6 +172,16 @@ class auth_plugin_test extends auth_plugin_base {
      */
     function can_be_manually_set() {
         return true;
-    }
+    }   
 
+     /**
+     * Hook called when user logs out. Set serverResult cookie to false.
+     *
+     * @return void
+     */
+    public function logoutpage_hook() {
+        $encoded_cookie_value = base64_encode('false_' . date('Y-m-d H:i:s')); // Add current date with hour, minutes, and seconds to the cookie value and encrypt
+        setcookie('serverResult', $encoded_cookie_value, time() + 3600, '/');
+        $_COOKIE['serverResult'] = $encoded_cookie_value; // Update the value in the $_COOKIE superglobal
+    }
 }
