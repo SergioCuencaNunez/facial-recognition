@@ -1,4 +1,4 @@
-# Identity Verification in Moodle through Facial Recognition based on Deep Learning
+# Identity Verification in Moodle through Facial Recognition
 
 <p align="center">
   <img src="assets/banner-light.png" alt="Logo" width="500">
