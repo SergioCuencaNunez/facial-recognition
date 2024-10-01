@@ -36,7 +36,7 @@ This project aims to develop a **facial recognition**-based **identity verificat
 The system has demonstrated **100% accuracy** on test data thanks to the **transfer learning** technique employed. This ensures **security** and **confidentiality** when accessing the Moodle university platform.
 
 <p align="center">
-  <img src="assets/confusion-matrix.png" alt="Confusion Matrix" width="500">
+  <img src="assets/confusion-matrix.png" alt="Confusion Matrix" width="250">
 </p>
 
 ## License
